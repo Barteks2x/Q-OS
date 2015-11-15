@@ -48,9 +48,6 @@ rm isl-0.14.tar.bz2
 rm mpc-0.8.1.tar.gz
 rm mpfr-2.4.2.tar.bz2
 
-# ensure we are in the correct directory before installing binutils
-cd $HOME/src
-
 # make a folder to store binutils installation data and enter it
 mkdir build-binutils
 cd build-binutils
