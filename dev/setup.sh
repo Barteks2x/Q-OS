@@ -4,7 +4,7 @@ export TARGET=i686-elf
 export PATH="$PREFIX/bin:$PATH"
 
 # make and enter the src directory
-cd /home/raph
+cd $HOME
 sudo mkdir src
 cd src
 
