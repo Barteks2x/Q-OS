@@ -160,6 +160,16 @@ void initialize_paging()
     kheap = create_heap(KHEAP_START, KHEAP_START+KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 }
 
+page_directory_t* clone_page_dir(page_directory_t* to_clone) {
+    uint32 phys;
+    // Make a new page directory and obtain its physical address.
+    page_directory_t *dir = (page_directory_t*)kmalloc_ap(sizeof(page_directory_t), &phys);
+    // Ensure that it is blank.
+    memset(dir, 0, sizeof(page_directory_t));
+    
+    
+}
+
 void switch_page_directory(page_directory_t *dir)
 {
     current_directory = dir;
@@ -170,7 +180,7 @@ void switch_page_directory(page_directory_t *dir)
     __asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
 }
 
-page_t *get_page(uint32 address, int make, page_directory_t *dir)
+page_t *get_page(uint32 address, bool make, page_directory_t *dir)
 {
     // Turn the address into an index.
     address /= 0x1000;
@@ -196,7 +206,7 @@ page_t *get_page(uint32 address, int make, page_directory_t *dir)
 }
 
 
-void page_fault(registers_t regs)
+void page_fault(registers_t *regs)
 {
     // A page fault has occurred.
     // The faulting address is stored in the CR2 register.
@@ -204,11 +214,11 @@ void page_fault(registers_t regs)
     __asm__ __volatile__("mov %%cr2, %0" : "=r" (faulting_address));
     
     // The error code gives us details of what happened.
-    int present   = !(regs.err_code & 0x1); // Page not present
-    int rw = regs.err_code & 0x2;           // Write operation?
-    int us = regs.err_code & 0x4;           // Processor was in user-mode?
-    int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
-    int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
+    int present   = !(regs->err_code & 0x1); // Page not present
+    int rw = regs->err_code & 0x2;           // Write operation?
+    int us = regs->err_code & 0x4;           // Processor was in user-mode?
+    int reserved = regs->err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
+    int id = regs->err_code & 0x10;          // Caused by an instruction fetch?
 
     // Output an error message.
     print("Page fault! ( ", 0x08);

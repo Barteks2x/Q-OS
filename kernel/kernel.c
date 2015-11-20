@@ -7,6 +7,7 @@
 #include "inc/initrd.h"
 #include "inc/kbDetect.h"
 #include "inc/descriptorTables.h"
+#include "inc/thread.h"
 
 extern uint32 placement_address;
 
@@ -26,11 +27,13 @@ int kmain(struct multiboot* mboot_ptr)
 
     // Initialize the initial ramdisk, and set it as the filesystem root.
     fs_root = initialize_initrd(initrd_location);
-
+    
     print("================================================================================", 0x3F);
     print("                             Welcome to Q OS                                    ", 0x3F);
     print("================================================================================", 0x3F);
 
+    init_scheduler();
+    
     launchShell();
     return 0;
 }
@@ -98,6 +101,16 @@ void kbHelp()
     print("\n", 0x0F);
 }
 
+void cat() {
+    char bufStr[MAX_FNAME_LEN];
+    print("\nFile Name>  ", 0x0F);
+    readStr(bufStr, MAX_FNAME_LEN);
+    ASSERT(strlength(bufStr) < MAX_FNAME_LEN);
+    for(int i = 0; i < 100; i++)
+    catFile(finddir_fs(fs_root, bufStr));
+    exit_thread();
+}
+
 void launchShell() {
     print(PRO_TIP, 0x0F);
     kbHelp();
@@ -140,10 +153,8 @@ void launchShell() {
         }
         else if(strEql(bufStr, "cat"))
         {
-            print("\nFile Name>  ", 0x0F);
-            readStr(bufStr, bufSize);
-            ASSERT(strlength(bufStr) < MAX_FNAME_LEN);
-            catFile(finddir_fs(fs_root, bufStr));
+            uint32 pid = start_thread(&cat);
+            wait_for_thread(pid);
         }
         else if(strEql(bufStr,"execute"))
         {

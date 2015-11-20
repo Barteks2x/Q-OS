@@ -71,6 +71,7 @@ void newLineCheck()
 
 void kprintch(char c, int b, bool incDelStop)
 {
+    __asm__ __volatile__("cli");
     string vidmem = (string) 0xb8000;     
     switch(c)
     {
@@ -114,6 +115,7 @@ void kprintch(char c, int b, bool incDelStop)
     }
     updateCursor();
     newLineCheck();
+    __asm__ __volatile__("sti");
 }
 
 void printch(char c, int b)
@@ -197,6 +199,7 @@ void printhex(uint32 n, int bh)
 }
 
 void moveCursorX(int x) {
+    __asm__ __volatile__("cli");
     cursorX += x;
     while(cursorX < 0) {
         cursorX += sw;
@@ -208,10 +211,13 @@ void moveCursorX(int x) {
     }
     updateCursor();
     newLineCheck();
+    __asm__ __volatile__("sti");
 }
 
 void moveCursorY(int y) {
+    __asm__ __volatile__("cli");
     cursorY += y;
     updateCursor();
     newLineCheck();
+    __asm__ __volatile__("sti");
 }

@@ -5,7 +5,8 @@
 #define TIMER_H
 
 #include "screenUtils.h"
+#include "isr.h"
 
-void init_timer(uint32 frequency);
+void init_timer(uint32 frequency, isr_t handler);
 
 #endif

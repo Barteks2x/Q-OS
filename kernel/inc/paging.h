@@ -59,12 +59,12 @@ void switch_page_directory(page_directory_t*);
    If make == 1, if the page-table in which this page should
    reside isn't created, create it!
  **/
-page_t *get_page(uint32, int, page_directory_t*);
+page_t *get_page(uint32, bool, page_directory_t*);
 
 /**
    Handler for page faults.
  **/
-void page_fault(registers_t);
+void page_fault(registers_t*);
 
 void alloc_frame(page_t*, int, int);
 

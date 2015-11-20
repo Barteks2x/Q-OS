@@ -6,17 +6,23 @@
 #include "screenUtils.h"
 
 uint32 tick = 0;
+isr_t timer_handler;
 
-static void timer_callback(registers_t regs)
+static void timer_callback(registers_t *regs)
 {
     tick++;
-    print("Tick: ", 0x0F);
+    /*print("Tick: ", 0x0F);
     printint(tick, 0x0F);
-    printch('\n', 0x0F);
+    printch('\n', 0x0F);//*/
+    
+    if(timer_handler != NULL)
+        timer_handler(regs);
+    
 }
 
-void init_timer(uint32 frequency)
+void init_timer(uint32 frequency, isr_t handler)
 {
+    timer_handler = handler;
     // Firstly, register our timer callback.
     register_interrupt_handler(IRQ0, &timer_callback);
 

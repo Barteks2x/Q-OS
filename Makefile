@@ -75,6 +75,7 @@ qemu: $(ISO)
 # -f needed to  avoid error when file doesn't exist
 	@rm -rf $(ODIR)
 	@rm $(AOBJECTS)
+	@rm -f $(DEPFILES)
 	@rm $(DIR)/kernel.o
 	@rm -f $(IMGDIR)/boot/$(KERNEL)
 	@rm -f $(ISO)

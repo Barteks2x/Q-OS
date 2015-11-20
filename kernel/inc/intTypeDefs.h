@@ -17,10 +17,12 @@ typedef unsigned long long uint64;
 typedef char* string; 
 
 //define boolean type and boolean literals
-typedef char bool;
+typedef _Bool bool;
 
 #define true (1 == 1)
 #define false (1 == 0)
+
+#define NULL 0
 
 #endif
 
